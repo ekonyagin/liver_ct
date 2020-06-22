@@ -96,16 +96,17 @@ def split_liver_tumor_mask(mask, n_class=None):
     return np.stack(res)
 
 class CroppedDataset(SegmentationFromCSV):
-    def __init__(self, data_path, modalities= ['CT'], target='target', metadata_rpath='meta_with_preds.csv', thresh=0.5):
+    def __init__(self, data_path, liver_pred_path, modalities= ['CT'], target='target', metadata_rpath='meta_with_preds.csv', thresh=0.5):
         super().__init__(data_path=data_path,
                          modalities=modalities,
                          target=target,
                          metadata_rpath=metadata_rpath)
         self.df.index = range(len(self.df))
         self.threshold = thresh
+        self.pred_path = liver_pred_path
     
     def get_indices(self, i):
-        fname = os.path.join(self.path, self.df.loc[i].pred)
+        fname = os.path.join(self.pred_path, self.df.loc[i].pred)
         print(fname)
         pred = load(fname)[0][0] > self.threshold
         print(pred.shape)
